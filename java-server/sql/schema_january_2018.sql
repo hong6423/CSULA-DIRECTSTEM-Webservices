@@ -1,157 +1,110 @@
-SET FOREIGN_KEY_CHECKS=0;
+SET FOREIGN_KEY_CHECKS = 0;
 
-drop table if exists users;
-drop table if exists projects;
-drop table if exists xrefUsersProjects;
-drop table if exists Service;
-drop table if exists Node;
-drop table if exists Input;
-drop table if exists Output;
-drop table if exists RefServiceXNode;
-drop table if exists RefChildrenNodes;
-drop table if exists RefNeighbors;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS xrefUsersProjects;
+DROP TABLE IF EXISTS Service;
+DROP TABLE IF EXISTS Node;
+DROP TABLE IF EXISTS Input;
+DROP TABLE IF EXISTS Output;
+DROP TABLE IF EXISTS RefServiceXNode;
+DROP TABLE IF EXISTS RefChildrenNodes;
+DROP TABLE IF EXISTS RefNeighbors;
 
-SET FOREIGN_KEY_CHECKS=1;
-
+SET FOREIGN_KEY_CHECKS = 1;
 
 
 CREATE TABLE Service (
-   ID int(11) NOT NULL AUTO_INCREMENT,
-   PRIMARY KEY (ID)
- ); 
+  ID INT(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (ID)
+);
 
 CREATE TABLE Node (
-   ID int(11) NOT NULL AUTO_INCREMENT,
-   xPos int(11) NOT NULL,
-   yPos int(11) NOT NULL,
-   Title VARCHAR(30) NOT NUll,
-   PRIMARY KEY (ID)
- );
+  ID          INT(11)      NOT NULL AUTO_INCREMENT,
+  xPos        INT(11)      NOT NULL,
+  yPos        INT(11)      NOT NULL,
+  Title       VARCHAR(30)  NOT NULL,
+  description VARCHAR(100) NULL,
+  PRIMARY KEY (ID)
+);
 
-CREATE TABLE Input (
-   maID int(11) DEFAULT NULL,
-   inID int(11) DEFAULT NULL,
-   KEY maID (maID),
-   KEY inID (inID),
-   FOREIGN KEY (maID) REFERENCES Node (ID)
-   	  ON DELETE CASCADE,
-   FOREIGN KEY (inID) REFERENCES Node (ID)
-   	  ON DELETE CASCADE
- );
-
-CREATE TABLE Output (
-   maID int(11) DEFAULT NULL,
-   outID int(11) DEFAULT NULL,
-   KEY maID (maID),
-   KEY outID (outID),
-   FOREIGN KEY (maID) REFERENCES Node (ID)
-   	  ON DELETE CASCADE,
-   FOREIGN KEY (outID) REFERENCES Node (ID)
-   	  ON DELETE CASCADE
- );
+CREATE TABLE EDGES (
+  ID       INT(11) NOT NULL AUTO_INCREMENT,
+  sourceID INT(11) NOT NULL,
+  destID   INT(11) NOT NULL,
+  FOREIGN KEY (sourceID) REFERENCES Node (ID)
+    ON DELETE CASCADE,
+  FOREIGN KEY (destID) REFERENCES Node (ID)
+    ON DELETE CASCADE,
+  PRIMARY KEY (ID)
+);
 
 CREATE TABLE RefServiceXNode (
-   nID int(11) NOT NULL,
-   sID int(11) NOT NULL,
-   UNIQUE KEY nID (nID),
-   KEY sID (sID),
-   FOREIGN KEY (nID) REFERENCES Node (ID)
-   	  ON DELETE CASCADE,
-   FOREIGN KEY (sID) REFERENCES Service (ID)
-   	  ON DELETE CASCADE
- );
-
-CREATE TABLE RefChildrenNodes (
-   pID int(11) DEFAULT NULL,
-   cID int(11) DEFAULT NULL,
-   UNIQUE KEY cID (cID),
-   FOREIGN KEY (pID) REFERENCES Node (ID)
-   ON DELETE RESTRICT,
-   FOREIGN KEY (cID) REFERENCES Node (ID)
-   	  ON DELETE CASCADE
- );
- 
- CREATE TABLE RefNeighbors (
-   maID int(11) DEFAULT NULL,
-   neID int(11) DEFAULT NULL,
-   FOREIGN KEY (maID) REFERENCES Node (ID)
-      ON DELETE CASCADE,
-   FOREIGN KEY (neID) REFERENCES Node (ID)
-	  ON DELETE CASCADE
- );
-
-create table users (
-    id              integer auto_increment,
-    firstname       varchar(255),
-    lastname		varchar(255),
-    username        varchar(255),
-    password        varchar(255),
-    email         varchar(255),
-    primary key(id)
+  nID INT(11) NOT NULL,
+  sID INT(11) NOT NULL,
+  UNIQUE KEY nID (nID),
+  KEY sID (sID),
+  FOREIGN KEY (nID) REFERENCES Node (ID)
+    ON DELETE CASCADE,
+  FOREIGN KEY (sID) REFERENCES Service (ID)
+    ON DELETE CASCADE
 );
 
-create table projects (
-	id		integer auto_increment,
-    title	varchar(255),
-    description varchar(255),
-    primary key(id)
+CREATE TABLE users (
+  id        INTEGER AUTO_INCREMENT,
+  firstname VARCHAR(255),
+  lastname  VARCHAR(255),
+  username  VARCHAR(255),
+  password  VARCHAR(255),
+  email     VARCHAR(255),
+  PRIMARY KEY (id)
 );
-create table xrefUsersProjects (
-	userid	integer,
-    projectid integer,
-    
-    foreign key(userid) references users(id),
-    foreign key(projectid) references projects(id)
+
+CREATE TABLE projects (
+  id          INTEGER AUTO_INCREMENT,
+  title       VARCHAR(255),
+  description VARCHAR(255),
+  PRIMARY KEY (id)
+);
+CREATE TABLE xrefUsersProjects (
+  userid    INTEGER,
+  projectid INTEGER,
+
+  FOREIGN KEY (userid) REFERENCES users (id),
+  FOREIGN KEY (projectid) REFERENCES projects (id)
 );
 
 
- 
- 
-Insert into Node (xPos,yPos, Title) VALUES (1,2, 'Eat');
-Insert into Node (xPos,yPos, Title) Values (2,3, 'Love');
-Insert into Node (xPos,yPos, Title) values (3,4, 'Pop');
-Insert into Node (xPos,yPos, Title) values (4,4, 'Shut');
-Insert into Node (xPos,yPos, Title) values (5,8, 'Cool');
-Insert into Node (xPos,yPos, Title) values (6,7, 'Neat');
+INSERT INTO Node (xPos, yPos, Title) VALUES (1, 2, 'Eat');
+INSERT INTO Node (xPos, yPos, Title) VALUES (2, 3, 'Love');
+INSERT INTO Node (xPos, yPos, Title) VALUES (3, 4, 'Pop');
+INSERT INTO Node (xPos, yPos, Title) VALUES (4, 4, 'Shut');
+INSERT INTO Node (xPos, yPos, Title) VALUES (5, 8, 'Cool');
+INSERT INTO Node (xPos, yPos, Title) VALUES (6, 7, 'Neat');
 
-Insert into Service () values ();
-Insert into Service () values ();
-Insert into Service () values ();
+INSERT INTO Service () VALUES ();
+INSERT INTO Service () VALUES ();
+INSERT INTO Service () VALUES ();
 
-Insert into Refservicexnode (nID,sID) Values (4,2);
-Insert into RefServicexNode (nID,sID) VALUES (1,2);
-Insert into RefServicexNode (nID,sID) VALUES (3,1);
-Insert into RefServicexNode (nID,sID) VALUES (2,3);
-
-Insert into RefChildrenNodes (pID,cID) Values (1,2);
-Insert into RefChildrenNodes (pID,cID) Values (1,3);
-Insert into Refchildrennodes (pID,cID) values (1,4);
-
-Insert into RefNeighbors (maID,neID) Values (1,5);
-Insert into RefNeighbors (maID,neID) Values (1,6);
-Insert into RefNeighbors (maID,neID) Values (5,1);
-Insert into RefNeighbors (maID,neID) Values (5,6);
-Insert into RefNeighbors (maID,neID) Values (6,1);
-Insert into RefNeighbors (maID,neID) Values (6,5);
-
-Insert into RefNeighbors (maID,neID) Values (2,3);
-Insert into RefNeighbors (maID,neID) Values (2,4);
-Insert into RefNeighbors (maID,neID) Values (3,2);
-Insert into RefNeighbors (maID,neID) Values (3,4);
-Insert into RefNeighbors (maID,neID) Values (4,2);
-Insert into RefNeighbors (maID,neID) Values (4,3);
-
-Insert into Input (maID,inID) values (2,3);
-Insert into Input (maID,inID) values (2,4);
-
-Insert into Output (maID,outID) values (4,2);
-Insert into Output (maID,outID) values (3,2);
+INSERT INTO Refservicexnode (nID, sID) VALUES (4, 2);
+INSERT INTO RefServicexNode (nID, sID) VALUES (1, 2);
+INSERT INTO RefServicexNode (nID, sID) VALUES (3, 1);
+INSERT INTO RefServicexNode (nID, sID) VALUES (2, 3);
 
 INSERT INTO users (firstName, lastName, username, password, email)
-VALUES ('Shay', 'Nguyen', 'shay', '1234','shay@nguyen.com');
-
+VALUES ('Bob', 'Dole', 'bob1337', '1234', 'bob@gmail.com');
 INSERT INTO users (firstName, lastName, username, password, email)
-VALUES ('Leanne', 'Graham', 'leanne', '1234','leanne@graham.com');
-
+VALUES ('Hongsuk', 'Choi', 'choi', '1234', 'choi@gmail.com');
 INSERT INTO users (firstName, lastName, username, password, email)
-VALUES ('Ervin', 'Howell', 'ervin', '1234','ervin@howell.com');
+VALUES ('Ice', 'Bear', 'icebear', '1234', 'icebear@gmail.com');
+
+INSERT INTO PROJECTS (title, description)
+VALUES ('Project 101', 'A cool project');
+INSERT INTO PROJECTS (title, description)
+VALUES ('Project 555', 'Has 5 stuff');
+INSERT INTO PROJECTS (title, description)
+VALUES ('Project 911', 'Call 911');
+INSERT INTO PROJECTS (title, description)
+VALUES ('Project 1337', 'Leet Project');
+INSERT INTO PROJECTS (title, description)
+VALUES ('Project 666', 'The devil''s project');
